@@ -18,11 +18,11 @@ public class BaseTimeEntity {
     @CreatedDate
     @Column(updatable = false)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
-    private Timestamp createAt;
+    private Timestamp createdAt;
 
     @LastModifiedDate
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
-    private Timestamp updateAt;
+    private Timestamp updatedAt;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
     private Timestamp deletedAt;

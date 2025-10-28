@@ -1,5 +1,6 @@
 package com.example.demo.Service;
 
+import com.example.demo.Config.ThumbnailConfig;
 import com.example.demo.Domain.Image;
 import com.example.demo.Domain.Status;
 import com.example.demo.Repository.ImageRepository;
@@ -27,6 +28,7 @@ public class ThumbnailService {
 
     private final MinioClient minioClient;
     private final ImageRepository imageRepository;
+    private final ThumbnailConfig thumbnailConfig;
     private final String bucket = "images";
 
     @Async
@@ -34,8 +36,10 @@ public class ThumbnailService {
     public void generateThumbnailAsync(Image image, MultipartFile file) {
         try {
             BufferedImage img = ImageIO.read(file.getInputStream());
-            int width = 150;
-            int height = (int)((double) img.getHeight()/img.getWidth() * width);
+            int width = thumbnailConfig.getWidth();
+            int height = thumbnailConfig.getHeight() >0 ?
+                    thumbnailConfig.getHeight() : (int)((double) img.getHeight()/img.getWidth() * width);
+
             BufferedImage thumbnail = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             Graphics2D g2d = thumbnail.createGraphics();
             g2d.drawImage(img.getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH), 0, 0, null);

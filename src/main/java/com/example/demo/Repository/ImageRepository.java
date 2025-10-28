@@ -27,4 +27,5 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
                                     Pageable pageable);
 
 
+    Optional<Image> findByHash(String hash);
 }

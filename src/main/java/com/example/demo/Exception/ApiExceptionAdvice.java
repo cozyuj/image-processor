@@ -1,5 +1,6 @@
 package com.example.demo.Exception;
 
+import com.sun.jdi.request.DuplicateRequestException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
@@ -18,6 +19,23 @@ import java.sql.SQLException;
 @Slf4j
 @RestControllerAdvice(annotations = {RestController.class}, basePackages = {"com.example.HyThon.web.controller"})
 public class ApiExceptionAdvice {
+
+    @ExceptionHandler({ApiException.class})
+    public ResponseEntity<ApiResult> exceptionHandler(HttpServletRequest request, final ApiException e) {
+
+        ApiExceptionEntity apiExceptionEntity = ApiExceptionEntity.builder()
+                .errorCode(e.getError().getCode())
+                .errorMessage(e.getError().getMessage())
+                .build();
+        log.error("API Exception occurred: {}", e.getMessage(), e);
+        return ResponseEntity
+                .status(e.getError().getHttpStatus())
+                .body(ApiResult.builder()
+                        .status("ERROR")
+                        .message("")
+                        .exception(apiExceptionEntity)
+                        .build());
+    }
 
     @ExceptionHandler({RuntimeException.class})
     public ResponseEntity<ApiResult> exceptionHandler(HttpServletRequest request, final RuntimeException e) {
@@ -154,22 +172,25 @@ public class ApiExceptionAdvice {
                         .build());
     }
 
-
-    @ExceptionHandler({ApiException.class})
-    public ResponseEntity<ApiResult> exceptionHandler(HttpServletRequest request, final ApiException e) {
-
+    @ExceptionHandler({DuplicateUploadException.class})
+    public ResponseEntity<ApiResult> exceptionHandler(HttpServletRequest request, final DuplicateUploadException e) {
         ApiExceptionEntity apiExceptionEntity = ApiExceptionEntity.builder()
-                .errorCode(e.getError().getCode())
-                .errorMessage(e.getError().getMessage())
+                .errorCode(ErrorHandling.DUPLICATE_REQUEST.getCode())
+                .errorMessage((ErrorHandling.DUPLICATE_REQUEST.getMessage()))
                 .build();
         log.error("API Exception occurred: {}", e.getMessage(), e);
         return ResponseEntity
-                .status(e.getError().getHttpStatus())
+                .status(ErrorHandling.DUPLICATE_REQUEST.getHttpStatus())
                 .body(ApiResult.builder()
                         .status("ERROR")
                         .message("")
                         .exception(apiExceptionEntity)
                         .build());
     }
+}
 
+class DuplicateUploadException extends RuntimeException {
+    public DuplicateUploadException(String message) {
+        super(message);
+    }
 }

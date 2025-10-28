@@ -10,24 +10,23 @@ import com.example.demo.Repository.ProjectRepository;
 import com.example.demo.dto.ImageRes;
 import com.example.demo.dto.ImageUploadReq;
 import com.example.demo.dto.ImageUploadRes;
-import com.sun.jdi.request.DuplicateRequestException;
+import com.example.demo.util.HashUtil;
 import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@Slf4j
 public class ImageService {
 
     private final ImageRepository imageRepository;
@@ -44,6 +43,7 @@ public class ImageService {
         this.thumbnailService = thumbnailService;
     }
 
+    @Transactional
     public List<ImageUploadRes> uploadImages(Long projectId, ImageUploadReq req) throws IOException {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
@@ -51,14 +51,18 @@ public class ImageService {
         List<ImageUploadRes> resList = new ArrayList<>();
 
         for (MultipartFile file : req.getFiles()) {
-            String filename = file.getOriginalFilename();
+            try (InputStream is = file.getInputStream()) {
+                // 파일 해시(SHA-256) 기반 중복 체크
+                String hash = HashUtil.sha256(is);
+                Optional<Image> existFile = imageRepository.findByHash(hash);
+                if (existFile.isPresent()) {
+                    log.info("중복 업로드 차단: {}", file.getOriginalFilename());
+                    throw new ApiException(ErrorHandling.DUPLICATE_REQUEST);
+                }
+                String filename = file.getOriginalFilename();
 
-            if (imageRepository.findByProjectIdAndOriginFileName(projectId, filename).isPresent()) {
-                throw new RuntimeException("Duplicate file: " + filename);
-            }
-            byte[] fileBytes = file.getBytes();
+                byte[] fileBytes = file.getBytes();
 
-            try {
                 String objectName = System.currentTimeMillis() + "_" + filename;
                 minioClient.putObject(
                         io.minio.PutObjectArgs.builder()
@@ -77,6 +81,7 @@ public class ImageService {
                         .size(file.getSize())
                         .binaryData(fileBytes)
                         .memo(req.getMemo())
+                        .hash(hash)
                         .tags(req.getTags())
                         .softDelete(false)
                         .status(Status.PROCESSING)
@@ -94,9 +99,8 @@ public class ImageService {
                         .fileUrl(fileUrl)
                         .build()
                 );
-
             } catch (Exception e) {
-                throw new RuntimeException("Failed to upload file: " + filename, e);
+                throw new ApiException(ErrorHandling.INTERNAL_SERVER_ERROR);
             }
         }
         return resList;

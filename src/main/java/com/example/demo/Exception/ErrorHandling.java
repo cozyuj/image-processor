@@ -16,6 +16,7 @@ public enum ErrorHandling {
     FORBIDDEN_EXCEPTION(HttpStatus.FORBIDDEN,"ER403","해당 권한이 없습니다."), //403
     NOT_FOUND_EXCEPTION(HttpStatus.NOT_FOUND,"ER404", "요청하신 페이지가 없습니다."), //404
     DUPLICATE_REQUEST(HttpStatus.CONFLICT, "ER409", "중복된 요청입니다."), // 409
+    PAYLOAD_TOO_LARGE(HttpStatus.PAYLOAD_TOO_LARGE,"ER413","파일크기가 너무 큽니다."), //413
     TOO_MANY_REQUEST_EXCEPTION(HttpStatus.TOO_MANY_REQUESTS,"ER429","너무 많은 요청이 발생했습니다. 잠시후 다시 시도해주세요."),//429
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "ER005","예상치 못한 오류가 발생했습니다."), //500
     KEY_DUPLICATION(HttpStatus.INTERNAL_SERVER_ERROR, "E0010", "데이터가 중복됐습니다.");

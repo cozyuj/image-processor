@@ -54,7 +54,10 @@ public class ImageService {
             try (InputStream is = file.getInputStream()) {
                 // 파일 해시(SHA-256) 기반 중복 체크
                 String hash = HashUtil.sha256(is);
-                Optional<Image> existFile = imageRepository.findByHash(hash);
+                //Optional<Image> existFile = imageRepository.findByHash(hash);
+                //@Transactional 필수: 락이 트랜잭션 내에서만 유효
+                //동시 요청 시, 먼저 락을 잡은 요청만 DB에 인서트 가능
+                Optional<Image> existFile = imageRepository.findByHashForUpdate(hash);
                 if (existFile.isPresent()) {
                     log.info("중복 업로드 차단: {}", file.getOriginalFilename());
                     throw new ApiException(ErrorHandling.DUPLICATE_REQUEST);

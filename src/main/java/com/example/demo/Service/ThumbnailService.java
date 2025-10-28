@@ -31,9 +31,9 @@ public class ThumbnailService {
     private final ThumbnailConfig thumbnailConfig;
     private final String bucket = "images";
 
-    @Async
+//    @Async
     @Transactional
-    public void generateThumbnailAsync(Image image, MultipartFile file) {
+    public void generateThumbnail(Image image, MultipartFile file) {
         try {
             BufferedImage img = ImageIO.read(file.getInputStream());
             int width = thumbnailConfig.getWidth();

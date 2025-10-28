@@ -91,9 +91,17 @@ public class ImageService {
                         .fileUrl(fileUrl)
                         .build();
 
-                imageRepository.save(newImage);
+                try {
+                    // 동기 썸네일 생성
+                    thumbnailService.generateThumbnail(newImage, file);
+                    newImage.setStatus(Status.READY);
+                } catch (Exception e) {
+                    // 썸네일 실패
+                    newImage.setStatus(Status.FAILED);
+                    log.error("썸네일 생성 실패", e);
+                }
 
-                thumbnailService.generateThumbnailAsync(newImage, file);
+                imageRepository.save(newImage);
 
                 resList.add(ImageUploadRes.builder()
                         .id(newImage.getId())

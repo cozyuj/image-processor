@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,21 +28,6 @@ public class ImageController {
 
     @Autowired
     ImageService imageService;
-
-//    @Operation(summary = "이미지 업로드", description = "멀티파트 업로드(N장 가능),\n" +
-//            "중복 업로드 방지(해시 기반 또는 락)\n")
-//    @Parameters({
-//            @Parameter(name = "projectId", description = "프로젝트 ID", required = true, example = "123"),
-//            @Parameter(name = "files", description = "업로드할 이미지 파일들", required = true)
-//    })
-//    @PostMapping("/projects/{projectId}/images")
-//    public ResponseEntity<?> uploadImage(
-//            @RequestParam MultipartFile[] files,
-//            @PathVariable Long projectId) {
-//        ImageUploadReq req = new ImageUploadReq();
-//        req.setFiles(Arrays.asList(files));
-//        return ResponseEntity.ok(imageService.uploadImages(projectId, req));
-//    }
 
     @Operation(summary = "이미지 단건 조회", description = "메타데이터 + presigned URL 반환")
     @ApiResponse(responseCode = "200", description = "이미지 단건 조회 성공")
@@ -61,7 +47,7 @@ public class ImageController {
             @RequestPart("files") List<MultipartFile> files,
             @RequestParam(value = "memo", required = false) String memo,
             @RequestParam(value = "tags", required = false) String tags
-    ) {
+    ) throws IOException {
         ImageUploadReq req = new ImageUploadReq(files, memo, tags);
         List<ImageUploadRes> uploaded = imageService.uploadImages(projectId, req);
         return ResponseEntity.ok(uploaded);

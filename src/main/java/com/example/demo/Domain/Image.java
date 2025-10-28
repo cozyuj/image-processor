@@ -31,6 +31,10 @@ public class Image extends BaseTimeEntity {
     @Column(name = "content_type", nullable = false, length = 50)
     private String contentType;
 
+    @Lob
+    @Column(name = "binary_data", columnDefinition = "LONGBLOB", nullable = false)
+    private byte[] binaryData;
+
     @Column(name = "file_url", nullable = false, length = 2048)
     private String fileUrl;
 
@@ -54,10 +58,11 @@ public class Image extends BaseTimeEntity {
     private Status status = Status.READY;
 
     @Builder
-    public Image(Project project, String originFileName, String contentType, String fileUrl, String thumbnailUrl, long size, String memo, String tags, Boolean softDelete, Status status) {
+    public Image(Project project, String originFileName, String contentType, byte[] binaryData, String fileUrl, String thumbnailUrl, long size, String memo, String tags, Boolean softDelete, Status status) {
         this.project = project;
         this.originFileName = originFileName;
         this.contentType = contentType;
+        this.binaryData = binaryData;
         this.fileUrl = fileUrl;
         this.thumbnailUrl = thumbnailUrl;
         this.size = size;

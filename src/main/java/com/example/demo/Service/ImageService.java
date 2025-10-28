@@ -44,7 +44,7 @@ public class ImageService {
         this.thumbnailService = thumbnailService;
     }
 
-    public List<ImageUploadRes> uploadImages(Long projectId, ImageUploadReq req) {
+    public List<ImageUploadRes> uploadImages(Long projectId, ImageUploadReq req) throws IOException {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 
@@ -56,6 +56,7 @@ public class ImageService {
             if (imageRepository.findByProjectIdAndOriginFileName(projectId, filename).isPresent()) {
                 throw new RuntimeException("Duplicate file: " + filename);
             }
+            byte[] fileBytes = file.getBytes();
 
             try {
                 String objectName = System.currentTimeMillis() + "_" + filename;
@@ -74,6 +75,7 @@ public class ImageService {
                         .originFileName(filename)
                         .contentType(file.getContentType())
                         .size(file.getSize())
+                        .binaryData(fileBytes)
                         .memo(req.getMemo())
                         .tags(req.getTags())
                         .softDelete(false)

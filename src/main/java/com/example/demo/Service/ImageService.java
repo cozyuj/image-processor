@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -138,5 +139,13 @@ public class ImageService {
                 .orElseThrow(() -> new RuntimeException("Image not found"));
         img.setSoftDelete(true);
         imageRepository.save(img);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ImageRes> getImagesByProject(long projectId, int offset, int limit) {
+        List<Image> images = imageRepository.findByProjectIdAndSoftDeleteFalseWithOffset(projectId, offset, limit);
+        return images.stream()
+                .map(ImageRes::entity)
+                .collect(Collectors.toList());
     }
 }

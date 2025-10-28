@@ -29,6 +29,15 @@ public class ImageController {
     @Autowired
     ImageService imageService;
 
+
+    @GetMapping("/project")
+    public ResponseEntity<?> getProjectImages(
+            @RequestParam(value = "id", required = false) long projectId,
+            @RequestParam(defaultValue = "0") int offset,
+            @RequestParam(defaultValue = "10") int limit) {
+        return ResponseEntity.ok(imageService.getImagesByProject(projectId, offset, limit));
+    }
+
     @Operation(summary = "이미지 단건 조회", description = "메타데이터 + presigned URL 반환")
     @ApiResponse(responseCode = "200", description = "이미지 단건 조회 성공")
     @GetMapping("/images/{id}")

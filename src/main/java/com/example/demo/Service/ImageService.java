@@ -83,10 +83,10 @@ public class ImageService {
                         .contentType(file.getContentType())
                         .size(file.getSize())
                         .binaryData(fileBytes)
+                        .softDelete(false)
                         .memo(req.getMemo())
                         .hash(hash)
                         .tags(req.getTags())
-                        .softDelete(false)
                         .status(Status.PROCESSING)
                         .fileUrl(fileUrl)
                         .build();
@@ -115,11 +115,12 @@ public class ImageService {
         return ImageRes.entity(img);
     }
 
-    public ImageRes updateImage(Long id, String memo, String tags) {
+    public ImageRes updateImage(Long id, String memo, String tags, String status) {
         Image img = imageRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Image not found"));
         if (memo != null) img.setMemo(memo);
         if (tags != null) img.setTags(tags);
+        if (status != null) img.setStatus(Status.valueOf(status));
         imageRepository.save(img);
         return ImageRes.entity(img);
     }

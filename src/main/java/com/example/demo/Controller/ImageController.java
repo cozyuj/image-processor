@@ -58,9 +58,10 @@ public class ImageController {
     public ResponseEntity<ImageRes> updateImage(
             @RequestParam(value = "memo", required = false) String memo,
             @RequestParam(value = "tags", required = false) String tags,
+            @RequestParam(value = "status", required = false) String status,
             @PathVariable Long id
     ) {
-        ImageRes updated = imageService.updateImage(id, memo, tags);
+        ImageRes updated = imageService.updateImage(id, memo, tags, status);
         return ResponseEntity.ok(updated);
     }
 

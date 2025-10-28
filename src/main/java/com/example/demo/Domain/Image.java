@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 
 
 @Entity
@@ -53,26 +54,27 @@ public class Image extends BaseTimeEntity {
     @Column(name = "tags", length = 255)
     private String tags;
 
-    @Column(name = "soft_delete", nullable = false)
-    private Boolean softDelete = false;
+    @Column(name = "soft_delete", nullable = false, columnDefinition = "bit(1) default 0")
+    private boolean softDelete = false;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private Status status = Status.READY;
 
+
     @Builder
-    public Image(Project project, String originFileName, String contentType, String hash, byte[] binaryData, String fileUrl, String thumbnailUrl, long size, String memo, String tags, Boolean softDelete, Status status) {
+    public Image(Project project, String originFileName, String contentType, String hash, byte[] binaryData, String fileUrl, String thumbnailUrl, long size, String memo, String tags, boolean softDelete, Status status) {
         this.project = project;
         this.originFileName = originFileName;
         this.contentType = contentType;
         this.hash = hash;
+        this.softDelete = softDelete;
         this.binaryData = binaryData;
         this.fileUrl = fileUrl;
         this.thumbnailUrl = thumbnailUrl;
         this.size = size;
         this.memo = memo;
         this.tags = tags;
-        this.softDelete = softDelete;
         this.status = status;
     }
 }

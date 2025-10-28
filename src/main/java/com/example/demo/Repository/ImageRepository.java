@@ -20,7 +20,7 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
     @Query("select i from Image i where i.project = :project and i.softDelete = false " +
             "and (:status is null or i.status = :status) " +
             "and (:tags is null or i.tags like %:tags%) " +
-            "order by i.createAt DESC")
+            "order by i.createdAt DESC")
     List<Image> findImagesByProject(@Param("project") Project project,
                                     @Param("status") String status,
                                     @Param("tags") String tags,

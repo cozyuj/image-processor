@@ -10,6 +10,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @NoArgsConstructor
+@Table(
+        name = "image",
+        indexes = {
+                @Index(name = "idx_project_status_create", columnList = "project_id, status, created_at"),
+        }
+)
 public class Image extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

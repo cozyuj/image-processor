@@ -40,6 +40,8 @@ This project is a **legacy structure-based CRUD API** for managing image data.
 | Update Image | PATCH | `/images/{id}` | Update tags, memo, or status |
 | Delete Image | DELETE | `/images/{id}` | Soft delete (`softDelete=true`) |
 
+
+<img width="1035" height="747" alt="Imace Processor ApIU C" src="https://github.com/user-attachments/assets/d1f5755e-0fd2-47b7-836c-0904e11200a7" />
 Swagger Documentation: [Swagger Docs](http://localhost:8080/swagger-ui.html)
 
 ## Load Testing Tool

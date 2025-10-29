@@ -30,6 +30,8 @@ public class ImageController {
     ImageService imageService;
 
 
+    @Operation(summary = "프로젝트 이미지 조회", description = "프로젝트 내 등록된 이미지 조회")
+    @ApiResponse(responseCode = "200", description = "조회 성공")
     @GetMapping("/projects")
     public ResponseEntity<?> getProjectImages(
             @RequestParam(value = "id", required = false) long projectId,
@@ -47,7 +49,8 @@ public class ImageController {
         return ResponseEntity.ok(image);
     }
 
-    @Operation(summary = "이미지 업로드", description = "멀티파트 업로드(N장 가능), 중복 업로드 방지")
+    @Operation(summary = "이미지 단건 또는 멀티 업로드", description = "멀티파트 업로드(N장 가능), " +
+            "중복 업로드 방지, 트랜잭션 적용")
     @PostMapping(value="/projects/{projectId}/images",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)

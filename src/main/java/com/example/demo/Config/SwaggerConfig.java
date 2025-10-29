@@ -11,8 +11,8 @@ public class SwaggerConfig {
     public OpenAPI openAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Hello Swagger")
-                        .description("스웨거 기능 테스트")
+                        .title("Image Processor API")
+                        .description("Image management api")
                         .version("1.0"));
     }
 }

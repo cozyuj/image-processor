@@ -30,7 +30,7 @@ public class ImageController {
     ImageService imageService;
 
 
-    @GetMapping("/project")
+    @GetMapping("/projects")
     public ResponseEntity<?> getProjectImages(
             @RequestParam(value = "id", required = false) long projectId,
             @RequestParam(defaultValue = "0") int offset,
